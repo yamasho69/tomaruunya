@@ -24,15 +24,19 @@ MonoBehaviour:
   - pbEditorScroll.x
   - pbEditorScroll.y
   - pb_MeshImporter::smoothingThreshold
-  m_String_keys: []
+  m_String_keys:
+  - pbVertexColorPrefs2
+  - pbVertexColorPrefs1
   m_Color_keys: []
   m_Material_keys: []
   m_Bool_values: 000101
-  m_Int_values: 01000000010000000200000000000000
+  m_Int_values: 00000000020000000200000000000000
   m_Float_values:
   - 0
-  - 446
+  - 0
   - 0.0001
-  m_String_values: []
+  m_String_values:
+  - RGBA(0.273, 0.084, 0.849, 1.000)
+  - RGBA(0.043, 0.043, 0.043, 1.000)
   m_Color_values: []
   m_Material_values: []
