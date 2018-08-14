@@ -12,7 +12,8 @@ public class PlayerController: MonoBehaviour
     public float idoSpeed = 5.0f;         // 移動速度（Public＝インスペクタで調整可能）
     public float kaitenSpeed = 1200.0f;   // プレイヤーの回転速度（Public＝インスペクタで調整可能）
     //前進するための力
-    private float forwardForce = 800.0f;
+    public float forwardForce = 30.0f;
+    public float rotateSpeed = 20.0f;
     //ジャンプするための力
     private float upForce = 500.0f;
     //動きを減速させる係数
@@ -35,6 +36,20 @@ public class PlayerController: MonoBehaviour
     // ■毎フレーム常に実行する処理
     void Update()
     {
+        float v = CrossPlatformInputManager.GetAxisRaw("Vertical");
+        float h = CrossPlatformInputManager.GetAxisRaw("Horizontal");
+        Rigidbody rb = GetComponent<Rigidbody>();
+        //rb.AddForce(v * forwardForce * transform.forward, ForceMode.Force);   // 上下で前進・後退
+        if (CrossPlatformInputManager.GetButton("Fire2"))   // Fire2 = 右クリック、左 Alt
+        {
+            rb.velocity = rb.velocity * coefficient;
+        }
+        else
+        {
+            rb.AddForce(forwardForce * transform.forward, ForceMode.Force);
+        }
+        transform.Rotate(Vector3.up * Time.deltaTime * rotateSpeed * h);
+
         // ▼▼▼移動処理▼▼▼
         if (CrossPlatformInputManager.GetAxisRaw("Vertical") == 0 && CrossPlatformInputManager.GetAxisRaw("Horizontal") == 0) //  テンキーや3Dスティックの入力（GetAxis）がゼロの時の動作
         {
@@ -46,8 +61,8 @@ public class PlayerController: MonoBehaviour
             Vector3 direction = Camera.main.transform.right * CrossPlatformInputManager.GetAxisRaw("Horizontal");  //  テンキーや3Dスティックの入力（GetAxis）があるとdirectionに値を返す
             animCon.SetBool("A_dash", true);  //  Runモーションする
 
-            MukiWoKaeru(direction);  //  向きを変える動作の処理を実行する（後述）
-            IdoSuru(direction);  //  移動する動作の処理を実行する（後述）
+            //MukiWoKaeru(direction);  //  向きを変える動作の処理を実行する（後述）
+            //IdoSuru(direction);  //  移動する動作の処理を実行する（後述）
         }
     }
     void OnTriggerEnter(Collider other)
