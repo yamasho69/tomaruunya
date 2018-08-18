@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Jump
   - Dash
+  - Wall
   layers:
   - Default
   - TransparentFX

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
+using UnityEngine.UI;
 
 
 public class PlayerController : MonoBehaviour
@@ -16,6 +17,8 @@ public class PlayerController : MonoBehaviour
     private float upForce = 500.0f;
     //動きを減速させる係数
     private float coefficient = 0.95f;
+    //加速するための力
+    private float kasoku = 1.50f;
     //ブレーキボタン押下の判定
     private bool isBrakeButtonDown = false;
     //アクションボタン押下の判定
@@ -34,7 +37,6 @@ public class PlayerController : MonoBehaviour
     // ■毎フレーム常に実行する処理
     void Update()
     {
-        float v = CrossPlatformInputManager.GetAxisRaw("Vertical");
         float h = CrossPlatformInputManager.GetAxisRaw("Horizontal");
         Rigidbody rb = GetComponent<Rigidbody>();
         //rb.AddForce(v * forwardForce * transform.forward, ForceMode.Force);   // 上下で前進・後退
@@ -44,29 +46,21 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            rb.AddForce(forwardForce * transform.forward, ForceMode.Force);
+            //ここ重要
+            rb.velocity = transform.forward * 10.0f;
+            //rb.AddForce(forwardForce * transform.forward, ForceMode.Acceleration);
         }
         transform.Rotate(Vector3.up * Time.deltaTime * rotateSpeed * h);
-
         //前に行く力を加える
         this.rigicon.AddForce(this.transform.forward * this.forwardForce);
+        
 
-        // ▼▼▼移動処理▼▼▼
-        if (CrossPlatformInputManager.GetAxisRaw("Vertical") == 0 && CrossPlatformInputManager.GetAxisRaw("Horizontal") == 0) //  テンキーや3Dスティックの入力（GetAxis）がゼロの時の動作
-        {
-            animCon.SetBool("is_dash", false);  //  Runモーションしない
-        }
-        else //  テンキーや3Dスティックの入力（GetAxis）がゼロではない時の動作
-        {
-            var cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;  //  カメラが追従するための動作
-            Vector3 direction = Camera.main.transform.right * CrossPlatformInputManager.GetAxisRaw("Horizontal");  //  テンキーや3Dスティックの入力（GetAxis）があるとdirectionに値を返す
-            animCon.SetBool("is_dash", true);  //  Runモーションする
-        }
+
     }
     void OnCollisionStay(Collider other)
     {
         //ジャンプパネル接触時にアクションボタンを押下したとき
-        if (other.gameObject.tag == "Jump" && Input.GetButtonDown("Action"))
+        if (other.gameObject.tag == "Jump" && Input.GetButtonDown("File2"))
         {
             //ジャンプアニメを再生
             animCon.SetBool("Jump", true);
@@ -74,10 +68,12 @@ public class PlayerController : MonoBehaviour
             rigicon.AddForce(this.transform.up * this.upForce);
         }
         //ダッシュパネル接触時にアクションボタンを押下したとき
-        if (other.gameObject.tag == "Dash" && Input.GetButtonDown("Action"))
+        if (other.gameObject.tag == "Dash" && Input.GetButtonDown("File2"))
         {
             //加速する
-
+            this.forwardForce *= this.kasoku;
+            this.upForce *= this.kasoku;
+            this.animCon.speed *= this.kasoku;
         }
 
     }
@@ -92,5 +88,15 @@ public class PlayerController : MonoBehaviour
             this.upForce *= this.coefficient;
             this.animCon.speed *= this.coefficient;
         }
+    }
+    //壁に接触したとき
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Wall")
+        {
+            this.forwardForce *= this.coefficient;
+            this.upForce *= this.coefficient;
+            this.animCon.speed *= this.coefficient;
+        }  // 減速する
     }
 }
