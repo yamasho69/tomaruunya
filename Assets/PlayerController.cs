@@ -14,15 +14,18 @@ public class PlayerController : MonoBehaviour
     public float forwardForce = 3.0f;
     public float rotateSpeed = 20.0f;
     //ジャンプするための力
-    private float upForce = 500.0f;
+    private float upForce = 1000.0f;
     //動きを減速させる係数
     private float coefficient = 0.95f;
     //加速するための力
-    private float kasoku = 1.50f;
+    private float kasoku = 2.5f;
     //ブレーキボタン押下の判定
     private bool isBrakeButtonDown = false;
     //アクションボタン押下の判定
     private bool isActionButtonDown = false;
+    private bool onJumpPanel = false;
+    private bool onDashPanel = false;
+    private bool is_jump = false;
 
     // ■最初に1回だけ実行する処理
     void Start()
@@ -33,7 +36,7 @@ public class PlayerController : MonoBehaviour
         //this.animCon.SetFloat("Speed", 1);
         //Rigidbodyコンポーネントを取得
         this.rigicon = GetComponent<Rigidbody>();
-    }
+}
     // ■毎フレーム常に実行する処理
     void Update()
     {
@@ -47,35 +50,65 @@ public class PlayerController : MonoBehaviour
         else
         {
             //ここ重要
-            rb.velocity = transform.forward * 10.0f;
+            rb.velocity = new Vector3(transform.forward.x * 10.0f, rb.velocity.y, transform.forward.z * 10.0f);
             //rb.AddForce(forwardForce * transform.forward, ForceMode.Acceleration);
         }
         transform.Rotate(Vector3.up * Time.deltaTime * rotateSpeed * h);
         //前に行く力を加える
-        this.rigicon.AddForce(this.transform.forward * this.forwardForce);
-        
-
-
-    }
-    void OnCollisionStay(Collider other)
-    {
-        //ジャンプパネル接触時にアクションボタンを押下したとき
-        if (other.gameObject.tag == "Jump" && Input.GetButtonDown("Action"))
+        //前に行く力を加える
+        var v2 = this.transform.forward * this.forwardForce;
+        this.rigicon.AddForce(v2);
+        //ジャンプパネルに乗っている時にボタンが押された
+        //Jumpステートの場合はJumpにfalseをセットする（追加）
+        if (this.animCon.GetCurrentAnimatorStateInfo(0).IsName("A_jump_start"))
         {
-            //ジャンプアニメを再生
-            animCon.SetBool("Jump", true);
+            this.animCon.SetBool("is_jump", false);
+        }
+
+        if (onJumpPanel && Input.GetButtonDown("Fire1"))
+        {
+        
             //プレイヤーに上方向の力を加える
             rigicon.AddForce(this.transform.up * this.upForce);
+            //ジャンプアニメを再生
+            animCon.SetBool("is_jump", true);
+
         }
-        //ダッシュパネル接触時にアクションボタンを押下したとき
-        if (other.gameObject.tag == "Dash" && Input.GetButtonDown("Action"))
+        //ダッシュパネルに乗っている時にボタンが押された
+        if (onDashPanel && Input.GetButtonDown("Fire1"))
         {
             //加速する
             this.forwardForce *= this.kasoku;
             this.upForce *= this.kasoku;
             this.animCon.speed *= this.kasoku;
         }
+        this.rigicon.AddForce(this.transform.forward * this.forwardForce);
+        if (rb.velocity.magnitude <= 1.0f) { this.animCon.SetBool("is_dush", false); }
+        else { this.animCon.SetBool("is_dush", true); };
+    }
 
+    void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Jump")
+        {
+            onJumpPanel = true;
+        }
+        if (other.gameObject.tag == "Dash")
+        {
+            onDashPanel = true;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Jump")
+        {
+            onJumpPanel = false;
+        }
+        if (other.gameObject.tag == "Dash")
+        {
+            onDashPanel = false;
+        }
     }
     //ブレーキボタンを押下したとき
     public void GetMyBrakeButtonDown()
