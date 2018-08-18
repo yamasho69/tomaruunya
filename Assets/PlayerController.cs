@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
     void OnCollisionStay(Collider other)
     {
         //ジャンプパネル接触時にアクションボタンを押下したとき
-        if (other.gameObject.tag == "Jump" && Input.GetButtonDown("File2"))
+        if (other.gameObject.tag == "Jump" && Input.GetButtonDown("Action"))
         {
             //ジャンプアニメを再生
             animCon.SetBool("Jump", true);
@@ -68,7 +68,7 @@ public class PlayerController : MonoBehaviour
             rigicon.AddForce(this.transform.up * this.upForce);
         }
         //ダッシュパネル接触時にアクションボタンを押下したとき
-        if (other.gameObject.tag == "Dash" && Input.GetButtonDown("File2"))
+        if (other.gameObject.tag == "Dash" && Input.GetButtonDown("Action"))
         {
             //加速する
             this.forwardForce *= this.kasoku;
