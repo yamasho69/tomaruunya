@@ -12,13 +12,13 @@ public class PlayerController : MonoBehaviour
     public Rigidbody rigicon;
     //前進するための力
     public float forwardForce = 3.0f;
-    public float rotateSpeed = 20.0f;
+    public float rotateSpeed = 80.0f;
     //ジャンプするための力
-    public float upForce = 840.0f;
+    public float upForce = 900.0f;
     //動きを減速させる係数
     public float coefficient = 0.95f;
     //加速するための力
-    public float kasoku = 3.0f;
+    public float kasoku = 3.5f;
     //ブレーキボタン押下の判定
     public bool isBrakeButtonDown = false;
     //アクションボタン押下の判定
@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             //ここ重要
-            rb.velocity = new Vector3(transform.forward.x * 10.0f, rb.velocity.y, transform.forward.z * 10.0f);
+            rb.velocity = new Vector3(transform.forward.x * 9.0f, rb.velocity.y, transform.forward.z * 9.0f);
             //rb.AddForce(forwardForce * transform.forward, ForceMode.Acceleration);
         }
         transform.Rotate(Vector3.up * Time.deltaTime * rotateSpeed * h);
@@ -77,13 +77,13 @@ public class PlayerController : MonoBehaviour
 
         }
         //ダッシュパネルに乗っている時にボタンが押された
-        if (onDashPanel && Input.GetButtonDown("Fire1") && forwardForce <= 2.0f)
+        if (onDashPanel && Input.GetButtonDown("Fire1") && forwardForce <= 3.0f)
         {
             //加速する
             this.forwardForce *= this.kasoku;
-            this.animCon.speed *= this.kasoku*0.9f;
+            this.animCon.speed *= this.kasoku*0.5f;
 
-            Invoke("Gensoku",3.0f);
+            Invoke("Gensoku",5.0f);
         }
         this.rigicon.AddForce(this.transform.forward * this.forwardForce);
         if (rb.velocity.magnitude <= 1.0f) { this.animCon.SetBool("is_dush", false); }
@@ -146,8 +146,8 @@ public class PlayerController : MonoBehaviour
             this.animCon.SetBool("is_fall", false);
         }
     }
-    public void Gensoku() { forwardForce = 2.0f;
-        rotateSpeed = 20.0f;
+    public void Gensoku() { forwardForce = 3.0f;
+        rotateSpeed = 80.0f;
         this.animCon.speed = 1.0f;
     }
 }
