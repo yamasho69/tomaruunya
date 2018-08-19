@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
         //this.animCon.SetFloat("Speed", 1);
         //Rigidbodyコンポーネントを取得
         this.rigicon = GetComponent<Rigidbody>();
-}
+    }
     // ■毎フレーム常に実行する処理
     void Update()
     {
@@ -46,6 +46,8 @@ public class PlayerController : MonoBehaviour
         if (CrossPlatformInputManager.GetButton("Fire2"))   // Fire2 = 右クリック、左 Alt
         {
             rb.velocity = rb.velocity * coefficient;
+            onJumpPanel = false;
+            onDashPanel = false;
         }
         else
         {
@@ -79,7 +81,7 @@ public class PlayerController : MonoBehaviour
         {
             //加速する
             this.forwardForce *= this.kasoku;
-            this.animCon.speed *= this.kasoku;
+            this.animCon.speed *= this.kasoku*0.9f;
 
             Invoke("Gensoku",3.0f);
         }
@@ -133,6 +135,7 @@ public class PlayerController : MonoBehaviour
             this.forwardForce *= this.coefficient;
             this.upForce *= this.coefficient;
             this.animCon.speed *= this.coefficient;
+            Invoke("Gensoku", 2.0f);
         }  // 減速する
         if (collision.gameObject.tag == "Fall")
         {
@@ -146,12 +149,5 @@ public class PlayerController : MonoBehaviour
     public void Gensoku() { forwardForce = 2.0f;
         rotateSpeed = 20.0f;
         this.animCon.speed = 1.0f;
-    }
-
-    public void PushBrakeButton() {
-        
-    }
-    public void UpBrakeButton() {
-        
     }
 }
