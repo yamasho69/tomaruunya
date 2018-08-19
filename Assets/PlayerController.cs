@@ -6,26 +6,26 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     // このスクリプトで使う変数一覧
-    private CharacterController charaCon;       // キャラクターコンポーネント用の変数
-    private Animator animCon;  //  アニメーションするための変数
+    public CharacterController charaCon;       // キャラクターコンポーネント用の変数
+    public Animator animCon;  //  アニメーションするための変数
     //プレイヤーを移動させるコンポーネントを入れる
-    private Rigidbody rigicon;
+    public Rigidbody rigicon;
     //前進するための力
     public float forwardForce = 3.0f;
     public float rotateSpeed = 20.0f;
     //ジャンプするための力
-    private float upForce = 1000.0f;
+    public float upForce = 840.0f;
     //動きを減速させる係数
-    private float coefficient = 0.95f;
+    public float coefficient = 0.95f;
     //加速するための力
-    private float kasoku = 2.5f;
+    public float kasoku = 3.0f;
     //ブレーキボタン押下の判定
-    private bool isBrakeButtonDown = false;
+    public bool isBrakeButtonDown = false;
     //アクションボタン押下の判定
-    private bool isActionButtonDown = false;
-    private bool onJumpPanel = false;
-    private bool onDashPanel = false;
-    private bool is_jump = false;
+    public bool isActionButtonDown = false;
+    public bool onJumpPanel = false;
+    public bool onDashPanel = false;
+    public bool is_jump = false;
 
     // ■最初に1回だけ実行する処理
     void Start()
@@ -75,16 +75,19 @@ public class PlayerController : MonoBehaviour
 
         }
         //ダッシュパネルに乗っている時にボタンが押された
-        if (onDashPanel && Input.GetButtonDown("Fire1"))
+        if (onDashPanel && Input.GetButtonDown("Fire1") && forwardForce <= 2.0f)
         {
             //加速する
             this.forwardForce *= this.kasoku;
-            this.upForce *= this.kasoku;
             this.animCon.speed *= this.kasoku;
+
+            Invoke("Gensoku",3.0f);
         }
         this.rigicon.AddForce(this.transform.forward * this.forwardForce);
         if (rb.velocity.magnitude <= 1.0f) { this.animCon.SetBool("is_dush", false); }
         else { this.animCon.SetBool("is_dush", true); };
+
+        if (isBrakeButtonDown == true) { GetMyBrakeButtonDown(); }
     }
 
     void OnTriggerStay(Collider other)
@@ -112,7 +115,7 @@ public class PlayerController : MonoBehaviour
     }
     //ブレーキボタンを押下したとき
     public void GetMyBrakeButtonDown()
-    {
+    {       
         //地面に設置していれば
         if (this.transform.position.y < 0.5f)
         {
@@ -131,5 +134,24 @@ public class PlayerController : MonoBehaviour
             this.upForce *= this.coefficient;
             this.animCon.speed *= this.coefficient;
         }  // 減速する
+        if (collision.gameObject.tag == "Fall")
+        {
+            this.animCon.SetBool("is_fall", true);
+        }
+        if (collision.gameObject.tag == "jimen")
+        {
+            this.animCon.SetBool("is_fall", false);
+        }
+    }
+    public void Gensoku() { forwardForce = 2.0f;
+        rotateSpeed = 20.0f;
+        this.animCon.speed = 1.0f;
+    }
+
+    public void PushBrakeButton() {
+        
+    }
+    public void UpBrakeButton() {
+        
     }
 }

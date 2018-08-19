@@ -7,6 +7,8 @@ TagManager:
   - Jump
   - Dash
   - Wall
+  - Fall
+  - jimen
   layers:
   - Default
   - TransparentFX
