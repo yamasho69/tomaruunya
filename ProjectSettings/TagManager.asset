@@ -19,6 +19,7 @@ TagManager:
   - cp08
   - cp09
   - cp10
+  - gp
   layers:
   - Default
   - TransparentFX

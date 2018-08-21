@@ -26,6 +26,8 @@ public class PlayerController : MonoBehaviour
     public bool onJumpPanel = false;
     public bool onDashPanel = false;
     public bool is_jump = false;
+    public int checkcount = 0;
+    public int goalcount = 0;
 
     // ■最初に1回だけ実行する処理
     void Start()
@@ -150,5 +152,89 @@ public class PlayerController : MonoBehaviour
         rotateSpeed = 80.0f;
         this.animCon.speed = 1.0f;
         upForce = 800.0f;
+    }
+    void OnTriggerEnter(Collider other)
+    {
+        Debug.Log(checkcount);
+        Debug.Log(goalcount);
+
+        if (other.gameObject.tag == "cp01")
+        {
+            if (checkcount == 0)
+            {
+                checkcount = 1;
+            }
+        }
+        if (other.gameObject.tag == "cp02")
+        {
+            if (checkcount == 1)
+            {
+                checkcount = 2;
+            }
+        }
+        if (other.gameObject.tag == "cp03")
+        {
+            if (checkcount == 2)
+            {
+                checkcount = 3;
+            }
+        }
+        if (other.gameObject.tag == "cp04")
+        {
+            if (checkcount == 3)
+            {
+                checkcount = 4;
+            }
+        }
+        if (other.gameObject.tag == "cp05")
+        {
+            if (checkcount == 4)
+            {
+                checkcount = 5;
+            }
+        }
+        if (other.gameObject.tag == "cp06")
+        {
+            if (checkcount == 5)
+            {
+                checkcount = 6;
+            }
+        }
+        if (other.gameObject.tag == "cp07")
+        {
+            if (checkcount == 6)
+            {
+                checkcount = 7;
+            }
+        }
+        if (other.gameObject.tag == "cp08")
+        {
+            if (checkcount == 7)
+            {
+                checkcount = 8;
+            }
+        }
+        if (other.gameObject.tag == "cp09")
+        {
+            if (checkcount == 8)
+            {
+                checkcount = 9;
+            }
+        }
+        if (other.gameObject.tag == "cp10")
+        {
+            if (checkcount == 9)
+            {
+                checkcount = 10;
+            }
+        }
+        if (other.gameObject.tag == "gp")
+        {
+            if (checkcount == 10)
+            {
+                goalcount += 1;
+                checkcount = 0;
+            }
+        }
     }
 }
