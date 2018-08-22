@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
-using System.Collections;
 [RequireComponent(typeof(NavMeshAgent))]
+
+
 
 public class RivalController : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class RivalController : MonoBehaviour
     private NavMeshAgent m_navAgent = null;
 
     private int m_targetIndex = 0;
+    public int rivalgoalcount = 0;
+    //ゲーム終了時に表示するテキスト（追加）
+    private GameObject stateText;
 
     private Vector3 CurretTargetPosition
     {
@@ -31,6 +35,8 @@ public class RivalController : MonoBehaviour
     {
         m_navAgent = GetComponent<NavMeshAgent>();
         m_navAgent.destination = CurretTargetPosition;
+        //シーン中のstateTextオブジェクトを取得（追加）
+        this.stateText = GameObject.Find("GameResultText");
     }
 
     private void Update()
@@ -42,8 +48,22 @@ public class RivalController : MonoBehaviour
             m_navAgent.destination = CurretTargetPosition;
         }
     }
-
-} // class ObjectController
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "gp")
+        {
+            if (rivalgoalcount == 0)
+            {
+                rivalgoalcount += 1;
+            }
+            if (rivalgoalcount == 1)
+            {
+                rivalgoalcount += 1;
+            }
+        }
+    }
+}
+ // class ObjectController
 
 
 //{public Transform target;

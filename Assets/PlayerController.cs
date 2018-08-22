@@ -28,6 +28,11 @@ public class PlayerController : MonoBehaviour
     public bool is_jump = false;
     public int checkcount = 0;
     public int goalcount = 0;
+    public bool isEnd = false;//終了判定
+    //ライバルコントローラーを取得
+    public RivalController RivalController;
+    //ゲーム終了時に表示するテキスト（追加）
+    public GameObject stateText;
 
     // ■最初に1回だけ実行する処理
     void Start()
@@ -38,6 +43,7 @@ public class PlayerController : MonoBehaviour
         //this.animCon.SetFloat("Speed", 1);
         //Rigidbodyコンポーネントを取得
         this.rigicon = GetComponent<Rigidbody>();
+
     }
     // ■毎フレーム常に実行する処理
     void Update()
@@ -92,7 +98,22 @@ public class PlayerController : MonoBehaviour
         else { this.animCon.SetBool("is_dush", true); };
 
         if (isBrakeButtonDown == true) { GetMyBrakeButtonDown(); }
+        //先にライバルがゴールしたとき
+        if (RivalController.rivalgoalcount == 2)
+        {   //stateTextにYOU LOSEを表示（追加）
+            this.stateText.GetComponent<Text>().text = "YOU LOSE";
+            isEnd = true;
+        }
+        //ゲーム終了ならプレイヤーの動きを減衰する（追加）
+        if (this.isEnd)
+        {
+            this.forwardForce *= this.coefficient;
+            this.rotateSpeed *= this.coefficient;
+            this.upForce *= this.coefficient;
+            this.animCon.speed *= this.coefficient;
+        }
     }
+
 
     void OnTriggerStay(Collider other)
     {
@@ -230,10 +251,16 @@ public class PlayerController : MonoBehaviour
         }
         if (other.gameObject.tag == "gp")
         {
-            if (checkcount == 10)
+            if (checkcount == 10 && goalcount ==0)
             {
                 goalcount += 1;
                 checkcount = 0;
+                
+            }
+            if (checkcount == 10 && goalcount == 1)
+            {
+             this.stateText.GetComponent<Text>().text = "GOAL";
+             isEnd = true;
             }
         }
     }
