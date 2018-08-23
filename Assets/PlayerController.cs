@@ -99,19 +99,20 @@ public class PlayerController : MonoBehaviour
 
         if (isBrakeButtonDown == true) { GetMyBrakeButtonDown(); }
         //先にライバルがゴールしたとき
-        if (RivalController.rivalgoalcount == 2)
+        if (RivalController.rivalgoalcount == 3)
         {   //stateTextにYOU LOSEを表示（追加）
             this.stateText.GetComponent<Text>().text = "YOU LOSE";
             isEnd = true;
         }
         //ゲーム終了ならプレイヤーの動きを減衰する（追加）
-        if (this.isEnd)
+        if (this.isEnd == true)
         {
-            this.forwardForce *= this.coefficient;
+            this.forwardForce *= 0.0f;
             this.rotateSpeed *= this.coefficient;
             this.upForce *= this.coefficient;
             this.animCon.speed *= this.coefficient;
-        }
+            this.animCon.SetBool("is_dush", false);
+}
     }
 
 
@@ -176,9 +177,6 @@ public class PlayerController : MonoBehaviour
     }
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log(checkcount);
-        Debug.Log(goalcount);
-
         if (other.gameObject.tag == "cp01")
         {
             if (checkcount == 0)
@@ -257,7 +255,7 @@ public class PlayerController : MonoBehaviour
                 checkcount = 0;
                 
             }
-            if (checkcount == 10 && goalcount == 1)
+            if (checkcount == 10 && goalcount == 1 && RivalController.rivalgoalcount != 3)
             {
              this.stateText.GetComponent<Text>().text = "GOAL";
              isEnd = true;

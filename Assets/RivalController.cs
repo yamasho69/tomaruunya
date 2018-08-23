@@ -15,6 +15,7 @@ public class RivalController : MonoBehaviour
 
     private int m_targetIndex = 0;
     public int rivalgoalcount = 0;
+    public PlayerController playerController;
     //ゲーム終了時に表示するテキスト（追加）
     private GameObject stateText;
 
@@ -39,7 +40,7 @@ public class RivalController : MonoBehaviour
         this.stateText = GameObject.Find("GameResultText");
     }
 
-    private void Update()
+    public void Update()
     {
         if (m_navAgent.remainingDistance <= m_destinationThreshold)
         {
@@ -50,13 +51,9 @@ public class RivalController : MonoBehaviour
     }
     public void OnTriggerEnter(Collider other)
     {
+       
         if (other.gameObject.tag == "gp")
         {
-            if (rivalgoalcount == 0)
-            {
-                rivalgoalcount += 1;
-            }
-            if (rivalgoalcount == 1)
             {
                 rivalgoalcount += 1;
             }
