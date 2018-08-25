@@ -7,19 +7,20 @@ using UnityEngine.AI;
 public class RivalController : MonoBehaviour
 {
     [SerializeField]
-    private Transform[] m_targets = null;
+    public Transform[] m_targets = null;
     [SerializeField]
-    private float m_destinationThreshold = 0.0f;
+    public float m_destinationThreshold = 0.0f;
+    public Animator animCon;  //  アニメーションするための変数
 
-    private NavMeshAgent m_navAgent = null;
+    public NavMeshAgent m_navAgent = null;
 
-    private int m_targetIndex = 0;
+    public int m_targetIndex = 0;
     public int rivalgoalcount = 0;
-    public PlayerController playerController;
+    public PlayerController PlayerController;
     //ゲーム終了時に表示するテキスト（追加）
-    private GameObject stateText;
+    public GameObject stateText;
 
-    private Vector3 CurretTargetPosition
+    public Vector3 CurretTargetPosition
     {
         get
         {
@@ -32,12 +33,14 @@ public class RivalController : MonoBehaviour
         }
     }
 
-    private void Start()
+    public void Start()
     {
         m_navAgent = GetComponent<NavMeshAgent>();
         m_navAgent.destination = CurretTargetPosition;
         //シーン中のstateTextオブジェクトを取得（追加）
         this.stateText = GameObject.Find("GameResultText");
+        PlayerController playerController = GetComponent<PlayerController>();
+        animCon = GetComponent<Animator>();
     }
 
     public void Update()
@@ -47,6 +50,10 @@ public class RivalController : MonoBehaviour
             m_targetIndex = (m_targetIndex + 1) % m_targets.Length;
 
             m_navAgent.destination = CurretTargetPosition;
+        }
+        if (PlayerController.isEnd == true)
+           { m_navAgent.Stop();
+            this.animCon.SetBool("is_dush", false);
         }
     }
     public void OnTriggerEnter(Collider other)

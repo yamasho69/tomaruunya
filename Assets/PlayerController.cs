@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour
     public GameObject stateText;
 
     // ■最初に1回だけ実行する処理
-    void Start()
+    public void Start()
     {
         charaCon = GetComponent<CharacterController>(); // キャラクターコントローラーのコンポーネントを参照する
         animCon = GetComponent<Animator>(); // アニメーターのコンポーネントを参照する
@@ -43,10 +43,11 @@ public class PlayerController : MonoBehaviour
         //this.animCon.SetFloat("Speed", 1);
         //Rigidbodyコンポーネントを取得
         this.rigicon = GetComponent<Rigidbody>();
+        RivalController rivalController = GetComponent<RivalController>();
 
     }
     // ■毎フレーム常に実行する処理
-    void Update()
+    public void Update()
     {
         float h = CrossPlatformInputManager.GetAxisRaw("Horizontal");
         Rigidbody rb = GetComponent<Rigidbody>();
@@ -99,20 +100,21 @@ public class PlayerController : MonoBehaviour
 
         if (isBrakeButtonDown == true) { GetMyBrakeButtonDown(); }
         //先にライバルがゴールしたとき
-        if (RivalController.rivalgoalcount == 3)
+        if (RivalController.rivalgoalcount == 3 && goalcount!=2)
         {   //stateTextにYOU LOSEを表示（追加）
             this.stateText.GetComponent<Text>().text = "YOU LOSE";
             isEnd = true;
         }
         //ゲーム終了ならプレイヤーの動きを減衰する（追加）
         if (this.isEnd == true)
-        {
-            this.forwardForce *= 0.0f;
+        { 
+            this.forwardForce *= this.coefficient;
             this.rotateSpeed *= this.coefficient;
             this.upForce *= this.coefficient;
             this.animCon.speed *= this.coefficient;
+            rb.velocity = new Vector3(transform.forward.x * 0.0f, rb.velocity.y, transform.forward.z * 0.0f);
             this.animCon.SetBool("is_dush", false);
-}
+        }
     }
 
 
@@ -257,7 +259,8 @@ public class PlayerController : MonoBehaviour
             }
             if (checkcount == 10 && goalcount == 1 && RivalController.rivalgoalcount != 3)
             {
-             this.stateText.GetComponent<Text>().text = "GOAL";
+                goalcount += 1;
+                this.stateText.GetComponent<Text>().text = "GOAL";
              isEnd = true;
             }
         }
