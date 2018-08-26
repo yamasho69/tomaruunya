@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 public class PlayerController : MonoBehaviour
@@ -119,6 +120,7 @@ public class PlayerController : MonoBehaviour
             this.animCon.SetBool("is_lose", true);
             audioSource.PlayOneShot(Lose, 1.0f);
             goalcount = 2;
+            Invoke("SceneChange", 2.0f);
         }
         //ゲーム終了ならプレイヤーの動きを減衰する（追加）
         if (this.isEnd == true)
@@ -191,6 +193,14 @@ public class PlayerController : MonoBehaviour
         rotateSpeed = 80.0f;
         this.animCon.speed = 1.0f;
         upForce = 800.0f;
+    }
+    public void SceneChange()
+    {
+        if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Fire2") || Input.GetButtonDown("Horizontal"))
+        {
+            //GameSceneを読み込む（追加）
+            SceneManager.LoadScene("Title");
+        }
     }
     void OnTriggerEnter(Collider other)
     {
@@ -281,6 +291,7 @@ public class PlayerController : MonoBehaviour
              isEnd = true;
                 this.animCon.SetBool("is_win", true);
                 audioSource.PlayOneShot(Win, 1.0f);
+                Invoke("SceneChange", 2.0f);
             }
         }
     }
