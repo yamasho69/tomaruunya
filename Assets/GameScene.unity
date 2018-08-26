@@ -4080,10 +4080,11 @@ AudioSource:
   m_GameObject: {fileID: 452809576}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 243759452368469712, guid: c8e98653fc23b1a4693a2cefa86bbf47,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -4213,7 +4214,7 @@ MonoBehaviour:
   stateText: {fileID: 1588688026}
   Jump: {fileID: 8300000, guid: 0f77778ececddf84e925929d6419cc3b, type: 3}
   Win: {fileID: 8300000, guid: 46416cb78163b674ca10a83d8b15ec10, type: 3}
-  Lose: {fileID: 8300000, guid: 4190e10aaf5a0314f85646eefea170a8, type: 3}
+  Lose: {fileID: 8300000, guid: 46416cb78163b674ca10a83d8b15ec10, type: 3}
   Dash: {fileID: 8300000, guid: e0be7855c4ca1674098dcc224f030b2f, type: 3}
 --- !u!136 &452809583
 CapsuleCollider:
@@ -9139,7 +9140,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 8d1e318c64a771d498db60ec0e52c178, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.1
+  m_Volume: 0.05
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -27854,6 +27855,7 @@ GameObject:
   - component: {fileID: 1588688027}
   - component: {fileID: 1588688029}
   - component: {fileID: 1588688028}
+  - component: {fileID: 1588688030}
   m_Layer: 5
   m_Name: GameResultText
   m_TagString: Untagged
@@ -27891,7 +27893,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6509804, g: 0.11701826, b: 0.08235295, a: 1}
+  m_Color: {r: 1, g: 0.015686274, b: 0.7838037, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -27899,13 +27901,13 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 80
-    m_FontStyle: 1
+    m_Font: {fileID: 12800000, guid: 0cee12756518db745b90fb4e1cf8af6b, type: 3}
+    m_FontSize: 120
+    m_FontStyle: 0
     m_BestFit: 1
-    m_MinSize: 6
-    m_MaxSize: 80
-    m_Alignment: 4
+    m_MinSize: 1
+    m_MaxSize: 120
+    m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -27919,6 +27921,20 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1588688026}
   m_CullTransparentMesh: 0
+--- !u!114 &1588688030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1588688026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!43 &1594032235
 Mesh:
   m_ObjectHideFlags: 0

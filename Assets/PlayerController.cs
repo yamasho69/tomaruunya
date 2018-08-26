@@ -113,11 +113,12 @@ public class PlayerController : MonoBehaviour
         if (isBrakeButtonDown == true) { GetMyBrakeButtonDown(); }
         //先にライバルがゴールしたとき
         if (RivalController.rivalgoalcount == 3 && goalcount!=2)
-        {   //stateTextにYOU LOSEを表示（追加）
-            this.stateText.GetComponent<Text>().text = "YOU LOSE";
+        {   //stateTextにYOU LOSEを表示（追加） 
+            this.stateText.GetComponent<Text>().text = "あ な た の ま け ㍉";
             isEnd = true;
             this.animCon.SetBool("is_lose", true);
             audioSource.PlayOneShot(Lose, 1.0f);
+            goalcount = 2;
         }
         //ゲーム終了ならプレイヤーの動きを減衰する（追加）
         if (this.isEnd == true)
@@ -270,13 +271,13 @@ public class PlayerController : MonoBehaviour
             {
                 goalcount += 1;
                 checkcount = 0;
-                this.stateText.GetComponent<Text>().text = "あと１周！";
+                this.stateText.GetComponent<Text>().text = "㍉　あと　いっしゅう　㍉";
 
             }
             if (checkcount == 10 && goalcount == 1 && RivalController.rivalgoalcount != 3)
             {
                 goalcount += 1;
-                this.stateText.GetComponent<Text>().text = "GOAL";
+                this.stateText.GetComponent<Text>().text = "あ な た の か ち ㍉";
              isEnd = true;
                 this.animCon.SetBool("is_win", true);
                 audioSource.PlayOneShot(Win, 1.0f);
