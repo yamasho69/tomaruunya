@@ -33,6 +33,11 @@ public class PlayerController : MonoBehaviour
     public RivalController RivalController;
     //ゲーム終了時に表示するテキスト（追加）
     public GameObject stateText;
+    AudioSource audioSource;//オーディオコンポーネント
+    public AudioClip Jump;
+    public AudioClip Win;
+    public AudioClip Lose;
+    public AudioClip Dash;
 
     // ■最初に1回だけ実行する処理
     public void Start()
@@ -44,6 +49,7 @@ public class PlayerController : MonoBehaviour
         //Rigidbodyコンポーネントを取得
         this.rigicon = GetComponent<Rigidbody>();
         RivalController rivalController = GetComponent<RivalController>();
+        audioSource = gameObject.GetComponent<AudioSource>();
 
     }
     // ■毎フレーム常に実行する処理
@@ -81,8 +87,13 @@ public class PlayerController : MonoBehaviour
         
             //プレイヤーに上方向の力を加える
             rigicon.AddForce(this.transform.up * this.upForce);
+            // debug
+            string aName = Jump.name;
+            float aLength = Jump.length;
+            Debug.Log(aName + ": " + aLength.ToString());
             //ジャンプアニメを再生
             animCon.SetBool("is_jump", true);
+            audioSource.PlayOneShot(Jump,1.0f);
 
         }
         //ダッシュパネルに乗っている時にボタンが押された
@@ -91,6 +102,7 @@ public class PlayerController : MonoBehaviour
             //加速する
             this.forwardForce *= this.kasoku;
             this.animCon.speed *= this.kasoku*0.55f;
+            audioSource.PlayOneShot(Dash, 1.0f);
 
             Invoke("Gensoku",5.0f);
         }
@@ -104,6 +116,8 @@ public class PlayerController : MonoBehaviour
         {   //stateTextにYOU LOSEを表示（追加）
             this.stateText.GetComponent<Text>().text = "YOU LOSE";
             isEnd = true;
+            this.animCon.SetBool("is_lose", true);
+            audioSource.PlayOneShot(Lose, 1.0f);
         }
         //ゲーム終了ならプレイヤーの動きを減衰する（追加）
         if (this.isEnd == true)
@@ -111,9 +125,9 @@ public class PlayerController : MonoBehaviour
             this.forwardForce *= this.coefficient;
             this.rotateSpeed *= this.coefficient;
             this.upForce *= this.coefficient;
-            this.animCon.speed *= this.coefficient;
             rb.velocity = new Vector3(transform.forward.x * 0.0f, rb.velocity.y, transform.forward.z * 0.0f);
             this.animCon.SetBool("is_dush", false);
+            
         }
     }
 
@@ -150,7 +164,7 @@ public class PlayerController : MonoBehaviour
             //減速する
             this.forwardForce *= this.coefficient;
             this.upForce *= this.coefficient;
-            this.animCon.speed *= this.coefficient;
+            this.animCon.SetBool("is_dush", false);
         }
     }
     //壁に接触したとき
@@ -184,6 +198,7 @@ public class PlayerController : MonoBehaviour
             if (checkcount == 0)
             {
                 checkcount = 1;
+                this.stateText.GetComponent<Text>().text = "";
             }
         }
         if (other.gameObject.tag == "cp02")
@@ -255,13 +270,16 @@ public class PlayerController : MonoBehaviour
             {
                 goalcount += 1;
                 checkcount = 0;
-                
+                this.stateText.GetComponent<Text>().text = "あと１周！";
+
             }
             if (checkcount == 10 && goalcount == 1 && RivalController.rivalgoalcount != 3)
             {
                 goalcount += 1;
                 this.stateText.GetComponent<Text>().text = "GOAL";
              isEnd = true;
+                this.animCon.SetBool("is_win", true);
+                audioSource.PlayOneShot(Win, 1.0f);
             }
         }
     }
