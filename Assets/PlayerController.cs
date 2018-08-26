@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
             this.animCon.SetBool("is_jump", false);
         }
 
-        if (onJumpPanel && Input.GetButtonDown("Fire1"))
+        if (onJumpPanel && Input.GetButton("Fire1"))
         {
         
             //プレイヤーに上方向の力を加える
@@ -98,7 +98,7 @@ public class PlayerController : MonoBehaviour
 
         }
         //ダッシュパネルに乗っている時にボタンが押された
-        if (onDashPanel && Input.GetButtonDown("Fire1") && forwardForce <= 3.1f)
+        if (onDashPanel && CrossPlatformInputManager.GetButton("Fire1") && forwardForce <= 3.1f)
         {
             //加速する
             this.forwardForce *= this.kasoku;
@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour
 
         if (isBrakeButtonDown == true) { GetMyBrakeButtonDown(); }
         //先にライバルがゴールしたとき
-        if (RivalController.rivalgoalcount == 3 && goalcount!=2)
+        if (RivalController.rivalgoalcount == 3 && goalcount!=2 || CrossPlatformInputManager.GetButton("Fire3"))//ここの条件がおかしい。
         {   //stateTextにYOU LOSEを表示（追加） 
             this.stateText.GetComponent<Text>().text = "あ な た の ま け ㍉";
             isEnd = true;
@@ -196,9 +196,9 @@ public class PlayerController : MonoBehaviour
     }
     public void SceneChange()
     {
-        if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Fire2") || Input.GetButtonDown("Horizontal"))
+        if (CrossPlatformInputManager.GetButton("Fire1") || CrossPlatformInputManager.GetButton("Fire2") || CrossPlatformInputManager.GetButton("Fire3") || CrossPlatformInputManager.GetButton("Horizontal"))
         {
-            //GameSceneを読み込む（追加）
+            //Titleを読み込む（追加）
             SceneManager.LoadScene("Title");
         }
     }
