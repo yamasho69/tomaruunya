@@ -41,6 +41,7 @@ public class RivalController : MonoBehaviour
         this.stateText = GameObject.Find("GameResultText");
         PlayerController playerController = GetComponent<PlayerController>();
         animCon = GetComponent<Animator>();
+        rivalgoalcount = 0;
     }
 
     public void Update()

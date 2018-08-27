@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
     public int checkcount = 0;
     public int goalcount = 0;
     public bool isEnd = false;//終了判定
+    public bool is_dush = true;
     //ライバルコントローラーを取得
     public RivalController RivalController;
     //ゲーム終了時に表示するテキスト（追加）
@@ -51,31 +52,44 @@ public class PlayerController : MonoBehaviour
         this.rigicon = GetComponent<Rigidbody>();
         RivalController rivalController = GetComponent<RivalController>();
         audioSource = gameObject.GetComponent<AudioSource>();
-
+        checkcount = 0;
+        goalcount = 0;
+        isEnd = false;
+        onJumpPanel = false;
+        onDashPanel = false;
+        isBrakeButtonDown = false;
+        isActionButtonDown = false;
+        this.animCon.SetBool("is_jump", false);
+        this.animCon.SetBool("is_dush", true);
+        forwardForce = 3.0f;
+        rotateSpeed = 80.0f;
+        upForce = 400.0f;
+        coefficient = 0.95f;
+        kasoku = 3.0f;
     }
     // ■毎フレーム常に実行する処理
     public void Update()
     {
+        Debug.Log(upForce);
         float h = CrossPlatformInputManager.GetAxisRaw("Horizontal");
-        Rigidbody rb = GetComponent<Rigidbody>();
+        Rigidbody rigicon = GetComponent<Rigidbody>();
         //rb.AddForce(v * forwardForce * transform.forward, ForceMode.Force);   // 上下で前進・後退
         if (CrossPlatformInputManager.GetButton("Fire2"))   // Fire2 = 右クリック、左 Alt
         {
-            rb.velocity = rb.velocity * coefficient;
-            onJumpPanel = false;
-            onDashPanel = false;
+            rigicon.velocity = rigicon.velocity * coefficient;
+ 
         }
         else
         {
             //ここ重要
-            rb.velocity = new Vector3(transform.forward.x * 9.0f, rb.velocity.y, transform.forward.z * 9.0f);
+            rigicon.velocity = new Vector3(transform.forward.x * 9.0f, rigicon.velocity.y, transform.forward.z * 9.0f);
             //rb.AddForce(forwardForce * transform.forward, ForceMode.Acceleration);
         }
         transform.Rotate(Vector3.up * Time.deltaTime * rotateSpeed * h);
         //前に行く力を加える
         //前に行く力を加える
-        var v2 = this.transform.forward * this.forwardForce;
-        this.rigicon.AddForce(v2);
+        //var v2 = this.transform.forward * this.forwardForce;
+        //this.rigicon.AddForce(v2);
         //ジャンプパネルに乗っている時にボタンが押された
         //Jumpステートの場合はJumpにfalseをセットする（追加）
         if (this.animCon.GetCurrentAnimatorStateInfo(0).IsName("A_jump_start"))
@@ -107,19 +121,17 @@ public class PlayerController : MonoBehaviour
 
             Invoke("Gensoku",5.0f);
         }
-        this.rigicon.AddForce(this.transform.forward * this.forwardForce);
-        if (rb.velocity.magnitude <= 1.0f) { this.animCon.SetBool("is_dush", false); }
+        //this.rigicon.AddForce(this.transform.forward * this.forwardForce);
+        if (rigicon.velocity.magnitude <= 1.0f) { this.animCon.SetBool("is_dush", false); }
         else { this.animCon.SetBool("is_dush", true); };
 
         if (isBrakeButtonDown == true) { GetMyBrakeButtonDown(); }
         //先にライバルがゴールしたとき
-        if (RivalController.rivalgoalcount == 3 && goalcount!=2 || CrossPlatformInputManager.GetButton("Fire3"))//ここの条件がおかしい。
+        if (RivalController.rivalgoalcount == 3 && goalcount!=2)
         {   //stateTextにYOU LOSEを表示（追加） 
             this.stateText.GetComponent<Text>().text = "あ な た の ま け ㍉";
             isEnd = true;
             this.animCon.SetBool("is_lose", true);
-            audioSource.PlayOneShot(Lose, 1.0f);
-            goalcount = 2;
             Invoke("SceneChange", 2.0f);
         }
         //ゲーム終了ならプレイヤーの動きを減衰する（追加）
@@ -128,10 +140,12 @@ public class PlayerController : MonoBehaviour
             this.forwardForce *= this.coefficient;
             this.rotateSpeed *= this.coefficient;
             this.upForce *= this.coefficient;
-            rb.velocity = new Vector3(transform.forward.x * 0.0f, rb.velocity.y, transform.forward.z * 0.0f);
+            rigicon.velocity = new Vector3(transform.forward.x * 0.0f, rigicon.velocity.y, transform.forward.z * 0.0f);
             this.animCon.SetBool("is_dush", false);
             
         }
+        if (CrossPlatformInputManager.GetButton("Fire3"))
+        { RivalController.rivalgoalcount = 3;}
     }
 
 
@@ -168,6 +182,7 @@ public class PlayerController : MonoBehaviour
             this.forwardForce *= this.coefficient;
             this.upForce *= this.coefficient;
             this.animCon.SetBool("is_dush", false);
+            rigicon.velocity = new Vector3(transform.forward.x * 5.0f, rigicon.velocity.y, transform.forward.z * 5.0f);
         }
     }
     //壁に接触したとき
@@ -177,7 +192,8 @@ public class PlayerController : MonoBehaviour
         {
             this.forwardForce *= this.coefficient;
             this.upForce *= this.coefficient;
-            this.animCon.speed *= this.coefficient;
+            this.animCon.speed *= this.coefficient; 
+            rigicon.velocity = new Vector3(transform.forward.x * 9.0f, rigicon.velocity.y, transform.forward.z * 9.0f);
             Invoke("Gensoku", 2.0f);
         }  // 減速する
         if (collision.gameObject.tag == "Fall")
@@ -192,11 +208,11 @@ public class PlayerController : MonoBehaviour
     public void Gensoku() { forwardForce = 3.0f;
         rotateSpeed = 80.0f;
         this.animCon.speed = 1.0f;
-        upForce = 800.0f;
+        upForce = 400.0f;
     }
     public void SceneChange()
     {
-        if (CrossPlatformInputManager.GetButton("Fire1") || CrossPlatformInputManager.GetButton("Fire2") || CrossPlatformInputManager.GetButton("Fire3") || CrossPlatformInputManager.GetButton("Horizontal"))
+        if (CrossPlatformInputManager.GetButtonDown("Fire1") || CrossPlatformInputManager.GetButton("Horizontal"))
         {
             //Titleを読み込む（追加）
             SceneManager.LoadScene("Title");
@@ -288,7 +304,7 @@ public class PlayerController : MonoBehaviour
             {
                 goalcount += 1;
                 this.stateText.GetComponent<Text>().text = "あ な た の か ち ㍉";
-             isEnd = true;
+                isEnd = true;
                 this.animCon.SetBool("is_win", true);
                 audioSource.PlayOneShot(Win, 1.0f);
                 Invoke("SceneChange", 2.0f);

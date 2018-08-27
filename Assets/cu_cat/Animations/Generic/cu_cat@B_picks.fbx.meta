@@ -130,7 +130,7 @@ ModelImporter:
     - serializedVersion: 16
       name: B_picks
       takeName: Take 001
-      firstFrame: 1
+      firstFrame: 0
       lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
