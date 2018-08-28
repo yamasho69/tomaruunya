@@ -6,8 +6,9 @@ using UnityEngine.SceneManagement;//シーンマネジメントを有効にす�
 public class StartButtonController : MonoBehaviour
 {
     AudioSource audioSource;
-    public AudioClip StartCoroutine;
-    public PlayerController PlayerController;
+    public AudioClip StartVoice;
+    //public PlayerController PlayerController;
+    //private bool isButtonDown = false;
 
 
     // Use this for initialization
@@ -20,11 +21,11 @@ public class StartButtonController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Fire1")) //マウス左クリック、スペースキー、Aボタン、ジャンプボタンを押した場合
-        {
-            audioSource.PlayOneShot(StartCoroutine, 1.0f);
-            SceneManager.LoadScene("GameScene");//GameSceneシーンをロードする
-        }
 
+    }
+    public void GetMyButtonUp()
+    {
+        audioSource.PlayOneShot(StartVoice, 1.0f);
+        SceneManager.LoadScene("GameScene");//GameSceneシーンをロードする}
     }
 }

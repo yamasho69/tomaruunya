@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     public float forwardForce = 3.0f;
     public float rotateSpeed = 80.0f;
     //ジャンプするための力
-    public float upForce = 400.0f;
+    public float upForce = 900.0f;
     //動きを減速させる係数
     public float coefficient = 0.95f;
     //加速するための力
@@ -52,32 +52,18 @@ public class PlayerController : MonoBehaviour
         this.rigicon = GetComponent<Rigidbody>();
         RivalController rivalController = GetComponent<RivalController>();
         audioSource = gameObject.GetComponent<AudioSource>();
-        checkcount = 0;
-        goalcount = 0;
-        isEnd = false;
-        onJumpPanel = false;
-        onDashPanel = false;
-        isBrakeButtonDown = false;
-        isActionButtonDown = false;
-        this.animCon.SetBool("is_jump", false);
-        this.animCon.SetBool("is_dush", true);
-        forwardForce = 3.0f;
-        rotateSpeed = 80.0f;
-        upForce = 400.0f;
-        coefficient = 0.95f;
-        kasoku = 3.0f;
     }
     // ■毎フレーム常に実行する処理
     public void Update()
     {
-        Debug.Log(upForce);
+        Debug.Log(checkcount);
         float h = CrossPlatformInputManager.GetAxisRaw("Horizontal");
         Rigidbody rigicon = GetComponent<Rigidbody>();
         //rb.AddForce(v * forwardForce * transform.forward, ForceMode.Force);   // 上下で前進・後退
         if (CrossPlatformInputManager.GetButton("Fire2"))   // Fire2 = 右クリック、左 Alt
         {
             rigicon.velocity = rigicon.velocity * coefficient;
- 
+
         }
         else
         {
@@ -97,9 +83,9 @@ public class PlayerController : MonoBehaviour
             this.animCon.SetBool("is_jump", false);
         }
 
-        if (onJumpPanel && Input.GetButton("Fire1"))
+        if (onJumpPanel && Input.GetButtonDown("Fire1"))
         {
-        
+
             //プレイヤーに上方向の力を加える
             rigicon.AddForce(this.transform.up * this.upForce);
             // debug
@@ -108,18 +94,18 @@ public class PlayerController : MonoBehaviour
             Debug.Log(aName + ": " + aLength.ToString());
             //ジャンプアニメを再生
             animCon.SetBool("is_jump", true);
-            audioSource.PlayOneShot(Jump,1.0f);
+            audioSource.PlayOneShot(Jump, 1.0f);
 
         }
         //ダッシュパネルに乗っている時にボタンが押された
-        if (onDashPanel && CrossPlatformInputManager.GetButton("Fire1") && forwardForce <= 3.1f)
+        if (onDashPanel && CrossPlatformInputManager.GetButtonDown("Fire1") && forwardForce <= 3.1f)
         {
             //加速する
             this.forwardForce *= this.kasoku;
-            this.animCon.speed *= this.kasoku*0.55f;
+            this.animCon.speed *= this.kasoku * 0.55f;
             audioSource.PlayOneShot(Dash, 1.0f);
 
-            Invoke("Gensoku",5.0f);
+            Invoke("Gensoku", 5.0f);
         }
         //this.rigicon.AddForce(this.transform.forward * this.forwardForce);
         if (rigicon.velocity.magnitude <= 1.0f) { this.animCon.SetBool("is_dush", false); }
@@ -127,7 +113,7 @@ public class PlayerController : MonoBehaviour
 
         if (isBrakeButtonDown == true) { GetMyBrakeButtonDown(); }
         //先にライバルがゴールしたとき
-        if (RivalController.rivalgoalcount == 3 && goalcount!=2)
+        if (RivalController.rivalgoalcount == 3 && goalcount != 2)
         {   //stateTextにYOU LOSEを表示（追加） 
             this.stateText.GetComponent<Text>().text = "あ な た の ま け ㍉";
             isEnd = true;
@@ -136,20 +122,20 @@ public class PlayerController : MonoBehaviour
         }
         //ゲーム終了ならプレイヤーの動きを減衰する（追加）
         if (this.isEnd == true)
-        { 
+        {
             this.forwardForce *= this.coefficient;
             this.rotateSpeed *= this.coefficient;
             this.upForce *= this.coefficient;
             rigicon.velocity = new Vector3(transform.forward.x * 0.0f, rigicon.velocity.y, transform.forward.z * 0.0f);
             this.animCon.SetBool("is_dush", false);
-            
+
         }
-        if (CrossPlatformInputManager.GetButton("Fire3"))
-        { RivalController.rivalgoalcount = 3;}
+        if (CrossPlatformInputManager.GetButtonDown("Fire3"))
+        { RivalController.rivalgoalcount = 3; }
     }
 
 
-    void OnTriggerStay(Collider other)
+    public void OnTriggerStay(Collider other)
     {
         if (other.gameObject.tag == "Jump")
         {
@@ -161,7 +147,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider other)
+    public void OnTriggerExit(Collider other)
     {
         if (other.gameObject.tag == "Jump")
         {
@@ -174,7 +160,7 @@ public class PlayerController : MonoBehaviour
     }
     //ブレーキボタンを押下したとき
     public void GetMyBrakeButtonDown()
-    {       
+    {
         //地面に設置していれば
         if (this.transform.position.y < 0.5f)
         {
@@ -186,13 +172,13 @@ public class PlayerController : MonoBehaviour
         }
     }
     //壁に接触したとき
-    void OnCollisionEnter(Collision collision)
+    public void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Wall")
         {
             this.forwardForce *= this.coefficient;
             this.upForce *= this.coefficient;
-            this.animCon.speed *= this.coefficient; 
+            this.animCon.speed *= this.coefficient;
             rigicon.velocity = new Vector3(transform.forward.x * 9.0f, rigicon.velocity.y, transform.forward.z * 9.0f);
             Invoke("Gensoku", 2.0f);
         }  // 減速する
@@ -205,20 +191,14 @@ public class PlayerController : MonoBehaviour
             this.animCon.SetBool("is_fall", false);
         }
     }
-    public void Gensoku() { forwardForce = 3.0f;
+    public void Gensoku()
+    {
+        forwardForce = 3.0f;
         rotateSpeed = 80.0f;
         this.animCon.speed = 1.0f;
-        upForce = 400.0f;
+        upForce = 900.0f;
     }
-    public void SceneChange()
-    {
-        if (CrossPlatformInputManager.GetButtonDown("Fire1") || CrossPlatformInputManager.GetButton("Horizontal"))
-        {
-            //Titleを読み込む（追加）
-            SceneManager.LoadScene("Title");
-        }
-    }
-    void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "cp01")
         {
@@ -293,7 +273,7 @@ public class PlayerController : MonoBehaviour
         }
         if (other.gameObject.tag == "gp")
         {
-            if (checkcount == 10 && goalcount ==0)
+            if (checkcount == 10 && goalcount == 0)
             {
                 goalcount += 1;
                 checkcount = 0;
@@ -311,4 +291,24 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    public void SceneChange()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            //Titleを読み込む（追加）
+            SceneManager.LoadScene("Title");
+        }
+        if (Input.touchCount > 0)
+        {
+            Touch[] touches = Input.touches;
+            foreach (Touch touch in touches)
+            {
+                if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
+                {
+                 SceneManager.LoadScene("Title");
+                }
+            }
+        }
+    }
 }
+
