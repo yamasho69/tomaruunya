@@ -120,6 +120,14 @@ public class PlayerController : MonoBehaviour
             this.animCon.SetBool("is_lose", true);
             Invoke("SceneChange", 2.0f);
         }
+        //先に自分がゴールしたとき
+        if (RivalController.rivalgoalcount != 3 && goalcount == 2)
+        {   //stateTextにYOU WINを表示（追加） 
+            this.stateText.GetComponent<Text>().text = "あ な た の か ち ㍉";
+            isEnd = true;
+            this.animCon.SetBool("is_win", true);
+            Invoke("SceneChange", 2.0f);
+        }
         //ゲーム終了ならプレイヤーの動きを減衰する（追加）
         if (this.isEnd == true)
         {
@@ -283,17 +291,13 @@ public class PlayerController : MonoBehaviour
             if (checkcount == 10 && goalcount == 1 && RivalController.rivalgoalcount != 3)
             {
                 goalcount += 1;
-                this.stateText.GetComponent<Text>().text = "あ な た の か ち ㍉";
-                isEnd = true;
-                this.animCon.SetBool("is_win", true);
                 audioSource.PlayOneShot(Win, 1.0f);
-                Invoke("SceneChange", 2.0f);
             }
         }
     }
     public void SceneChange()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             //Titleを読み込む（追加）
             SceneManager.LoadScene("Title");
@@ -305,7 +309,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
                 {
-                 SceneManager.LoadScene("Title");
+                    SceneManager.LoadScene("Title");
                 }
             }
         }

@@ -26,6 +26,12 @@ public class StartButtonController : MonoBehaviour
     public void GetMyButtonUp()
     {
         audioSource.PlayOneShot(StartVoice, 1.0f);
-        SceneManager.LoadScene("GameScene");//GameSceneシーンをロードする}
+        Invoke("SC", 2.0f);
+
     }
+    public void SC()
+    {
+        SceneManager.LoadScene("GameScene");
+    }//GameSceneシーンをロードする
+
 }
